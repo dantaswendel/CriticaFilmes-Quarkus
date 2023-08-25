@@ -1,5 +1,7 @@
 package org.acme.criticafilme.rest;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -28,6 +30,36 @@ public class UserResource {
 
     @GET
     public Response listAllUsers(){
-        return Response.ok().build();
+        PanacheQuery<PanacheEntityBase> query = User.findAll();
+        return Response.ok(query.list()).build();
+    }
+
+
+    @DELETE
+    @Path("{id}")
+    @Transactional
+    public Response deleteUser(@PathParam("id") Long id){
+     User user= User.findById(id);
+
+     if(user!= null){
+         user.delete();
+         return  Response.ok().build();
+     }
+        return  Response.status(Response.Status.NOT_FOUND).build();
+    }
+
+
+    @PUT
+    @Path("{id}")
+    @Transactional
+    public Response updateUser(@PathParam("id") Long id, CreateUserRequest userData){
+        User user= User.findById(id);
+
+        if(user!= null){
+            user.setAge(userData.getAge());
+            user.setName(userData.getName());
+            return  Response.ok(user).build();
+        }
+        return  Response.status(Response.Status.NOT_FOUND).build();
     }
 }
