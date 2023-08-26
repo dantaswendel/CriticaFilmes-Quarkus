@@ -1,7 +1,14 @@
 package org.acme.criticafilme.rest.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class CreateUserRequest {
+
+    @NotBlank(message = "Campo Obrigatorio")
     private  String name;
+
+    @NotNull@NotBlank(message = "Campo Obrigatorio")
     private  Integer age;
 
 

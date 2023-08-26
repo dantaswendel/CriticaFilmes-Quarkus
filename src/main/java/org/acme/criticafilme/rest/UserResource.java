@@ -3,6 +3,8 @@ package org.acme.criticafilme.rest;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import jakarta.inject.Inject;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -12,6 +14,8 @@ import org.acme.criticafilme.rest.dto.CreateUserRequest;
 
 import jakarta.transaction.Transactional;
 
+import java.util.Set;
+
 @Path("/users")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -19,14 +23,23 @@ public class UserResource {
 
 
     private UserRepository repository;
+    private Validator validator;
 
     @Inject
-    public UserResource(UserRepository repository){
+    public UserResource(UserRepository repository, Validator validator){
         this.repository = repository;
+        this.validator = validator;
     }
+
     @POST
     @Transactional
     public Response createUser(CreateUserRequest userRequest){
+
+
+        Set<ConstraintViolation<CreateUserRequest>> violations = validator.validate(userRequest);
+        if (!violations.isEmpty()){
+            return Response.status(400).build();
+        }
         User user = new User();
         user.setAge(userRequest.getAge());
         user.setName(userRequest.getName());
