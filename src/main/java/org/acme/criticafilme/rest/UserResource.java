@@ -38,7 +38,10 @@ public class UserResource {
 
         Set<ConstraintViolation<CreateUserRequest>> violations = validator.validate(userRequest);
         if (!violations.isEmpty()){
-            return Response.status(400).build();
+            ConstraintViolation<CreateUserRequest> erro = violations.stream().findAny().get();
+          String errorMessage = erro.getMessage();
+
+            return Response.status(400).entity(errorMessage).build();
         }
         User user = new User();
         user.setAge(userRequest.getAge());
