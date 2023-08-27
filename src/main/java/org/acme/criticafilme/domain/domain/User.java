@@ -1,4 +1,4 @@
-package org.acme.criticafilme.rest.domain.domain;
+package org.acme.criticafilme.domain.domain;
 
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
