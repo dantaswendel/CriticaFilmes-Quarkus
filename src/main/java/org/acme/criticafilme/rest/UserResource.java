@@ -11,10 +11,11 @@ import jakarta.ws.rs.core.Response;
 import org.acme.criticafilme.rest.domain.domain.User;
 import org.acme.criticafilme.rest.domain.repository.UserRepository;
 import org.acme.criticafilme.rest.dto.CreateUserRequest;
-
 import jakarta.transaction.Transactional;
+import org.acme.criticafilme.rest.dto.ResponseErrors;
 
 import java.util.Set;
+
 
 @Path("/users")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -38,17 +39,17 @@ public class UserResource {
 
         Set<ConstraintViolation<CreateUserRequest>> violations = validator.validate(userRequest);
         if (!violations.isEmpty()){
-            ConstraintViolation<CreateUserRequest> erro = violations.stream().findAny().get();
-          String errorMessage = erro.getMessage();
 
-            return Response.status(400).entity(errorMessage).build();
+            return ResponseErrors.createFormValidation(violations).withStatusCode(ResponseErrors.UNPROCESSABLE_ENTITY_STATUS);
         }
         User user = new User();
         user.setAge(userRequest.getAge());
         user.setName(userRequest.getName());
 
         repository.persist(user);
-        return  Response.ok(user).build();
+        return  Response.status(Response.Status.CREATED.getStatusCode())
+                .entity(user)
+                .build();
     }
 
 

@@ -8,7 +8,7 @@ public class CreateUserRequest {
     @NotBlank(message = "Campo Obrigatorio")
     private  String name;
 
-    @NotNull@NotBlank(message = "Campo Obrigatorio")
+    @NotNull(message ="Campo Obrigatorio")
     private  Integer age;
 
 
