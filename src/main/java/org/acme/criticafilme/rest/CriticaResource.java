@@ -2,6 +2,7 @@ package org.acme.criticafilme.rest;
 
 
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.quarkus.panache.common.Sort;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
@@ -63,7 +64,7 @@ public class CriticaResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        PanacheQuery<Critica> query = criticaRespository.find("user",user);
+        PanacheQuery<Critica> query = criticaRespository.find("user", Sort.by("dateTime", Sort.Direction.Descending),user);
 
         List<Critica> list = query.list();
 
