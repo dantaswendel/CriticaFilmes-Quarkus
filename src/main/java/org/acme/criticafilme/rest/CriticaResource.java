@@ -12,9 +12,11 @@ import org.acme.criticafilme.domain.domain.User;
 import org.acme.criticafilme.domain.repository.CriticaRespository;
 import org.acme.criticafilme.domain.repository.UserRepository;
 import org.acme.criticafilme.rest.dto.CreateCriticaRequest;
+import org.acme.criticafilme.rest.dto.CriticaResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/criticas/{user_id}")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -65,7 +67,11 @@ public class CriticaResource {
 
         List<Critica> list = query.list();
 
-        return  Response.ok(list).build();
+      var criticaResponseList  = list.stream()
+              .map(critica -> CriticaResponse.fromEntity(critica))
+              .collect(Collectors.toList());
+
+        return  Response.ok(criticaResponseList).build();
     }
 
 }
