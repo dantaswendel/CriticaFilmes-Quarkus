@@ -1,6 +1,7 @@
 package org.acme.criticafilme.rest;
 
 
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
@@ -13,6 +14,7 @@ import org.acme.criticafilme.domain.repository.UserRepository;
 import org.acme.criticafilme.rest.dto.CreateCriticaRequest;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Path("/criticas/{user_id}")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -52,9 +54,18 @@ public class CriticaResource {
 
 
     @GET
-    public Response listCriticas(@PathParam("userId") Long userId){
+    public Response listCriticas(@PathParam("user_id") Long user_id){
 
-        return  Response.ok().build();
+        User user =userRepository.findById(user_id);
+        if(user==null){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        PanacheQuery<Critica> query = criticaRespository.find("user",user);
+
+        List<Critica> list = query.list();
+
+        return  Response.ok(list).build();
     }
 
 }
