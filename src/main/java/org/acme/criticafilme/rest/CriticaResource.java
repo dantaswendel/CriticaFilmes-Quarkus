@@ -12,15 +12,15 @@ import org.acme.criticafilme.domain.repository.CriticaRespository;
 import org.acme.criticafilme.domain.repository.UserRepository;
 import org.acme.criticafilme.rest.dto.CreateCriticaRequest;
 
-@Path("/user/{userId}/criticas")
+import java.time.LocalDateTime;
+
+@Path("/criticas/{user_id}")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class CriticaResource {
 
     private UserRepository userRepository;
     private CriticaRespository criticaRespository;
-
-    private CriticaRespository respository;
 
 
     @Inject
@@ -31,9 +31,9 @@ public class CriticaResource {
 
     @POST
     @Transactional
-    public Response saveCritica(@PathParam("userId") Long userId, CreateCriticaRequest request){
+    public Response saveCritica(@PathParam("user_id") Long user_id, CreateCriticaRequest request){
 
-        User user =userRepository.findById(userId);
+        User user =userRepository.findById(user_id);
 
         if(user==null){
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -41,8 +41,10 @@ public class CriticaResource {
 
         Critica critica = new Critica();
         critica.setFilme(request.getFilme());
-        critica.setTexto(request.getTexto());
+        critica.setCritica_text(request.getCritica_text());
+        critica.setDateTime(LocalDateTime.now());
         critica.setUser(user);
+
         criticaRespository.persist(critica);
 
         return  Response.status(Response.Status.CREATED).build();

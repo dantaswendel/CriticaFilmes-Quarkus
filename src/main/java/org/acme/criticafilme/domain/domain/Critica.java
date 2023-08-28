@@ -19,7 +19,7 @@ public class Critica {
     private String filme;
 
     @Column(name ="critica_text")
-    private String texto;
+    private String critica_text;
 
     @Column(name = "datetime")
     private LocalDateTime dateTime;

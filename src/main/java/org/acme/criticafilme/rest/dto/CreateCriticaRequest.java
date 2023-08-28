@@ -7,6 +7,5 @@ import lombok.Data;
 public class CreateCriticaRequest {
 
     private String filme;
-
-    private  String texto;
+    private  String critica_text;
 }
