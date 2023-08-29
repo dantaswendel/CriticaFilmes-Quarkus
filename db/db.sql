@@ -4,14 +4,7 @@ CREATE TABLE USERS (
     age INT NOT NULL
 );
 
- CREATE TABLE criticas (
-    id BIGINT NOT NULL PRIMARY KEY,
-    filme VARCHAR(150) NOT NULL,
-    critica_text VARCHAR(3000) NOT NULL,
-    datetime TIMESTAMP NOT NULL,
-    user_id BIGINT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id)
-);
+
 
 CREATE TABLE POSTS (
    id bigint unsigned not null auto_increment primary key,
