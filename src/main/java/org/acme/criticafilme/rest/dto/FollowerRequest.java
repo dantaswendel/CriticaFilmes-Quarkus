@@ -5,8 +5,7 @@ import lombok.Data;
 import org.acme.criticafilme.domain.domain.User;
 
 @Data
-public class CreateFollowerRequest {
+public class FollowerRequest {
 
-    private User follower;
-    private User profile;
+    private Long followerId;
 }
