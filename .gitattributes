@@ -1,2 +1,4 @@
-*.java linguist-language=Java
+* linguist-vendored
+*.php linguist-vendored=false
+*.java linguist-detectable=true
 // java
