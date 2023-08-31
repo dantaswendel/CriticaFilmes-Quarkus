@@ -10,6 +10,11 @@ import org.acme.criticafilme.domain.domain.User;
 import org.acme.criticafilme.domain.repository.FollowerRepository;
 import org.acme.criticafilme.domain.repository.UserRepository;
 import org.acme.criticafilme.rest.dto.FollowerRequest;
+import org.acme.criticafilme.rest.dto.FollowerResponse;
+import org.acme.criticafilme.rest.dto.FollowersPerUserResponse;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/followers/{userId}")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -35,7 +40,7 @@ public class FollowerResource {
 
     if(userId.equals(request.getFollowerId())){
 
-    Response.status(Response.Status.CONFLICT)
+        return Response.status(Response.Status.CONFLICT)
             .entity("Voce não pode seguir a si mesmo")
             .build();
       }
@@ -64,5 +69,39 @@ public class FollowerResource {
     }
 
 
+    @GET
+    public Response listFOllowers(@PathParam("userId") Long userId){
+
+        var user = userRepository.findById(userId);
+        if (user == null){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        var list = repository.findByUser(userId);
+        FollowersPerUserResponse responseObject = new FollowersPerUserResponse();
+        responseObject.setFollowersaCount(list.size());
+
+       var followerList = list.stream().map(FollowerResponse::new).collect(Collectors.toList());
+
+        responseObject.setContent(followerList);
+        return Response.ok(responseObject).build();
+
+
+    }
+
+
+    @DELETE
+    @Transactional
+    public Response unfollowUser(@PathParam("userId") Long userId,
+                                 @QueryParam("followerId") Long followerId){
+
+        User user= userRepository.findById(userId);
+
+        if(user== null){
+            return  Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        repository.deleteByFollowerAndUser(followerId,userId);
+        return  Response.status(Response.Status.NO_CONTENT).build();
+    }
 
 }
