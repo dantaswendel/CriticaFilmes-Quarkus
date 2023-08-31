@@ -11,6 +11,7 @@ import jakarta.ws.rs.core.Response;
 import org.acme.criticafilme.domain.domain.Critica;
 import org.acme.criticafilme.domain.domain.User;
 import org.acme.criticafilme.domain.repository.CriticaRespository;
+import org.acme.criticafilme.domain.repository.FollowerRepository;
 import org.acme.criticafilme.domain.repository.UserRepository;
 import org.acme.criticafilme.rest.dto.CreateCriticaRequest;
 import org.acme.criticafilme.rest.dto.CriticaResponse;
@@ -27,11 +28,15 @@ public class CriticaResource {
     private UserRepository userRepository;
     private CriticaRespository criticaRespository;
 
+    private FollowerRepository followerRepository;
+
 
     @Inject
-    public CriticaResource(UserRepository userRepository, CriticaRespository criticaRespository) {
+    public CriticaResource(UserRepository userRepository, CriticaRespository criticaRespository, FollowerRepository followerRepository) {
         this.userRepository = userRepository;
         this.criticaRespository = criticaRespository;
+        this.followerRepository = followerRepository;
+
     }
 
     @POST
@@ -57,12 +62,37 @@ public class CriticaResource {
 
 
     @GET
-    public Response listCriticas(@PathParam("user_id") Long user_id){
+    public Response listCriticas(@PathParam("user_id") Long user_id,
+                                 @HeaderParam("followerId") Long followerId){
 
         User user =userRepository.findById(user_id);
         if(user==null){
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+
+        User follower = userRepository.findById(followerId);
+
+
+       if (followerId == null){
+           return Response.status(Response.Status.BAD_REQUEST)
+                   .entity("Informe o id do follower no campo header")
+                   .build();
+       }
+
+
+        if (follower == null){
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Follower inexistente")
+                    .build();
+        }
+
+        boolean follows = followerRepository.follows(follower, user);
+
+        if (!follows){
+
+           return  Response.status(Response.Status.FORBIDDEN).entity("Voce nao pode ver as criticas desse usuario").build();
+       }
+
 
         PanacheQuery<Critica> query = criticaRespository.find("user", Sort.by("dateTime", Sort.Direction.Descending),user);
 
