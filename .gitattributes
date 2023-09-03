@@ -1,4 +1,2 @@
 * linguist-vendored
-*.php linguist-vendored=false
-*.java linguist-detectable=true
-// java
+*.html linguist-vendored=false
