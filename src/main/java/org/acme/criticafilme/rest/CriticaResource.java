@@ -66,23 +66,23 @@ public class CriticaResource {
                                  @HeaderParam("followerId") Long followerId){
 
         User user =userRepository.findById(user_id);
-        if(user==null){
+        if(user == null){
             return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        if(followerId == null){
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity("You forgot the header followerId")
+                    .build();
         }
 
         User follower = userRepository.findById(followerId);
 
-
-       if (followerId == null){
-           return Response.status(Response.Status.BAD_REQUEST)
-                   .entity("Informe o id do follower no campo header")
-                   .build();
-       }
-
-
-        if (follower == null){
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Follower inexistente")
+        if(follower == null){
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity("Inexistent followerId")
                     .build();
         }
 
